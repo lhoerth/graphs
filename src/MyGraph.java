@@ -66,25 +66,49 @@ public class MyGraph implements Graph {
      * @return an iterable collection of vertices that are reachable from v in the graph
      */
     public Collection<Vertex> reachableVertices(Vertex v) {
-        // YOUR CODE HERE
+
+        // hold all of v's reachable nodes
         Set<Vertex> result = new HashSet<Vertex>();
+
+        //
         Set<Vertex> frontier = new HashSet<Vertex>();
         Set<Vertex> nextFrontier = new HashSet<Vertex>();
 
         // a vertex is reachable to itself (path length 0)
         result.add(v);
+
         frontier.add(v);
+
         while (!frontier.isEmpty()) {
+
             Iterator itr = frontier.iterator();
 
-            // cast to vertex because iterator.next returns Object
-            Vertex current = (Vertex)itr.next();
+            while (itr.hasNext()) {
+                // cast to vertex because iterator.next returns Object
+                Vertex current = (Vertex) itr.next();
 
-            Set<Vertex> outNodes = outNeighbors(current);
-            ///pseudo
-            nextFrontier = set_union(nextFrontier, outNodes);
+                // out-neighbors of current
+                Set<Vertex> outNodes = outNeighbors(current);
 
+                // remove all out-neighbors we already visited (omit loops)
+                // by removing all elements of result from outNodes of current
+                outNodes.removeAll(result);
+
+                // then copy all remaining outNodes of current to the next frontier
+                nextFrontier.addAll(outNodes);
+                outNodes.clear();
+            }
+
+            result.addAll(nextFrontier);
+
+            frontier.clear();
+            frontier.addAll(nextFrontier);
+            nextFrontier.clear();
         }
+        return result;
+    }
+
+    private Set<Vertex> depthReachable(Set<Vertex> set, Vertex v) {
         return null;
     }
 
