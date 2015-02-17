@@ -17,7 +17,8 @@ public class MyGraph implements Graph {
      */
     public MyGraph(Collection<Vertex> v, Collection<Edge> e) {
 
-        // YOUR CODE HERE
+        myVertices = v;
+        myEdges = e;
 
     }
 
@@ -27,9 +28,7 @@ public class MyGraph implements Graph {
      * @return the vertices as a collection (which is anything iterable)
      */
     public Collection<Vertex> vertices() {
-
-        // YOUR CODE HERE
-        return null;
+        return myVertices;
     }
 
     /**
@@ -38,9 +37,7 @@ public class MyGraph implements Graph {
      * @return the edges as a collection (which is anything iterable)
      */
     public Collection<Edge> edges() {
-
-        // YOUR CODE HERE
-        return null;
+        return myEdges;
     }
 
     /**
@@ -53,9 +50,7 @@ public class MyGraph implements Graph {
      * @throws IllegalArgumentException if v does not exist.
      */
     public Collection<Vertex> adjacentVertices(Vertex v) {
-
-        // YOUR CODE HERE
-        return null;
+        return v.adjList;
     }
 
     /**
@@ -66,6 +61,8 @@ public class MyGraph implements Graph {
      * @return an iterable collection of vertices that are reachable from v in the graph
      */
     public Collection<Vertex> reachableVertices(Vertex v) {
+
+        // breadth first?
 
         // hold all of v's reachable nodes
         Set<Vertex> result = new HashSet<Vertex>();
@@ -80,7 +77,7 @@ public class MyGraph implements Graph {
         frontier.add(v);
 
         while (!frontier.isEmpty()) {
-
+            // to iterate through frontier
             Iterator itr = frontier.iterator();
 
             while (itr.hasNext()) {
@@ -112,14 +109,23 @@ public class MyGraph implements Graph {
         return null;
     }
 
+    private Vertex findNewVertexOfIndegreeZero() {
+        return null;
+    }
+
     /**
      * Returns a topological sorting of the vertices in the graph.
      *
      * @return an ordered list of vertices in topological sort order
      */
     public List<Vertex> topologicalSort() {
-        // YOUR CODE HERE
-        return null;
+        for (int counter = 0; count < myVertices.size(); counter++) {
+            Vertex v = findNewVertexOfIndegreeZero();
+            v.topNum = counter;
+            for (Vertex w : v.adjList) {
+                w.indegree--;
+            }
+        }
     }
 
     /**

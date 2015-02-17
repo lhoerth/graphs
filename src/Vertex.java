@@ -1,8 +1,15 @@
+import java.util.LinkedList;
+
 /**
  * Representation of a graph vertex
  */
 public class Vertex {
     private final String label;   // label attached to this vertex
+
+    // adjacency list
+    public LinkedList<Vertex> adjList;
+
+    public int indegree;
 
     /**
      * Construct a new vertex
@@ -15,6 +22,7 @@ public class Vertex {
         }
 
         this.label = label;
+        this.indegree = 0;
     }
 
     /**

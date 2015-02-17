@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Graph Program.iml" filepath="$PROJECT_DIR$/Graph Program.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graphs.iml" filepath="$PROJECT_DIR$/graphs.iml" />
     </modules>
   </component>
 </project>

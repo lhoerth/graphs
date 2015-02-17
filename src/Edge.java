@@ -18,6 +18,10 @@ public class Edge {
             throw new IllegalArgumentException("null");
         }
 
+        // add "to" vertex to "from" vertex's adjList - this might not work (from might just be a copy)
+        from.adjList.add(to);
+        to.indegree++;
+
         this.from = from;
         this.to = to;
         this.w = w;
