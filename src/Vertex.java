@@ -10,6 +10,7 @@ public class Vertex {
     public LinkedList<Vertex> adjList;
 
     public int indegree;
+    public int topNum;
 
     /**
      * Construct a new vertex

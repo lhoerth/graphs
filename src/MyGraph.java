@@ -17,9 +17,16 @@ public class MyGraph implements Graph {
      */
     public MyGraph(Collection<Vertex> v, Collection<Edge> e) {
 
+        // calculate indegrees of vertices
+        for (Vertex w : v){
+            for (Edge a : e) {
+                if (a.to == w)
+                    w.indegree++;
+            }
+        }
+
         myVertices = v;
         myEdges = e;
-
     }
 
     /**
@@ -42,7 +49,7 @@ public class MyGraph implements Graph {
 
     /**
      * Return a collection of vertices adjacent to a given vertex v.
-     * i.e., the set of all vertices w where edges v -> w exist in the graph.
+     * i.e., the set of all vertices w where edges v -> w exist in the graph. (from == v)
      * Return an empty collection if there are no adjacent vertices.
      *
      * @param v one of the vertices in the graph
@@ -50,7 +57,7 @@ public class MyGraph implements Graph {
      * @throws IllegalArgumentException if v does not exist.
      */
     public Collection<Vertex> adjacentVertices(Vertex v) {
-        return v.adjList;
+        return outNeighbors(v);
     }
 
     /**
@@ -62,12 +69,12 @@ public class MyGraph implements Graph {
      */
     public Collection<Vertex> reachableVertices(Vertex v) {
 
-        // breadth first?
+        // breadth first
 
-        // hold all of v's reachable nodes
+        // hold result, all of v's reachable nodes
         Set<Vertex> result = new HashSet<Vertex>();
 
-        //
+        // Empty sets for current and next frontiers
         Set<Vertex> frontier = new HashSet<Vertex>();
         Set<Vertex> nextFrontier = new HashSet<Vertex>();
 
@@ -76,12 +83,14 @@ public class MyGraph implements Graph {
 
         frontier.add(v);
 
+        // while there are vertices in the current frontier
         while (!frontier.isEmpty()) {
             // to iterate through frontier
             Iterator itr = frontier.iterator();
 
+            // until the last of the frontier
             while (itr.hasNext()) {
-                // cast to vertex because iterator.next returns Object
+                // get current; cast to vertex because iterator.next returns Object
                 Vertex current = (Vertex) itr.next();
 
                 // out-neighbors of current
@@ -105,27 +114,69 @@ public class MyGraph implements Graph {
         return result;
     }
 
-    private Set<Vertex> depthReachable(Set<Vertex> set, Vertex v) {
+    /*private Set<Vertex> depthReachable(Set<Vertex> set, Vertex v) {
         return null;
-    }
-
-    private Vertex findNewVertexOfIndegreeZero() {
-        return null;
-    }
+    }*/
 
     /**
      * Returns a topological sorting of the vertices in the graph.
+     * Got help from Brandon
      *
      * @return an ordered list of vertices in topological sort order
      */
     public List<Vertex> topologicalSort() {
-        for (int counter = 0; count < myVertices.size(); counter++) {
-            Vertex v = findNewVertexOfIndegreeZero();
-            v.topNum = counter;
-            for (Vertex w : v.adjList) {
-                w.indegree--;
+        /* Brandon's example (adjusted):
+        List<Vertex> result = new LinkedList<Vertex>();
+
+        boolean added = false;
+        for (Vertex v : myVertices) {
+            for (Vertex w : result) {
+                // if v has fewer inNeighbors than w,
+                if (inNeighbors(v).size() < inNeighbors(w).size()) {
+                    // add v before w in result list
+                    result.add(result.indexOf(w), v);
+                    added = true;
+
+                    // done checking current v against result vertices
+                    break;
+                }
+            }
+            if (added) {
+                added = false;
+            }
+            else {
+                result.add(v);
             }
         }
+        return result;
+        */
+
+        // book's example (I adapted it from their pseudocode):
+        List<Vertex> result = new LinkedList<Vertex>();
+        Queue<Vertex> q = new LinkedList<Vertex>();
+
+        int counter = 0;
+
+        for (Vertex v : myVertices) {
+            if (v.indegree == 0) {
+                q.add(v);
+            }
+        }
+
+        while (!q.isEmpty()){
+            Vertex v = q.remove();
+            result.add(v);
+            v.topNum = ++counter; // assign next number
+
+            for (Vertex w : adjacentVertices(v)){
+
+                if (--w.indegree == 0){
+                    q.add(w);
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -139,8 +190,11 @@ public class MyGraph implements Graph {
      * @throws IllegalArgumentException if a or b do not exist.
      */
     public int isAdjacent(Vertex a, Vertex b) {
-
-        // YOUR CODE HERE
+        for (Edge e : myEdges){
+            if (e.from == a && e.to == b){
+                return e.w;
+            }
+        }
         return -1;
     }
 
@@ -168,14 +222,14 @@ public class MyGraph implements Graph {
 
     // helper method
     // When provided with a vertex called v
-    // it should return a set of all the "incoming neighbor vertices of v
+    // it should return a set of all the "incoming" neighbor vertices of v
     public Set<Vertex> inNeighbors(Vertex v) {
         Set<Vertex> result = new HashSet<Vertex>();
         // for every edge e in the myEdges set,
         for (Edge e : myEdges) {
             // if the "to" end of the edge matches the parameter,
             if (e.to.equals(v)) {
-                // it is an "in-neighbor" and we add it to the result
+                // the other end is an "in-neighbor" and we add it to the result
                 result.add(e.from);
             }
         }
@@ -183,14 +237,18 @@ public class MyGraph implements Graph {
     }
 
     // When provided with a vertex called v
-    // it should return a set of all the "outgoing neighbor vertices of v
+    // it should return a set of all the "outgoing" neighbor vertices of v
     public Set<Vertex> outNeighbors(Vertex v) {
         Set<Vertex> result = new HashSet<Vertex>();
-        // for every edge e in the myEdges set,
+
+        /* myEdges is a set of all edges in the graph and it is iterable so we an
+            use it in a for each loop to check every edge we have.
+         */
+        // for every edge e in the myEdges set (entire graph),
         for (Edge e : myEdges) {
-            // if the "from" end of the edge matches the parameter,
+            // if the "from" end of the edge matches v, like (v->x),
             if (e.from.equals(v)) {
-                // it is an "out-neighbor" and we add it to the result
+                // the other end of the edge is an "out-neighbor" and we add it to our result
                 result.add(e.to);
             }
         }
@@ -202,14 +260,18 @@ public class MyGraph implements Graph {
         // create empty set
         Set<Vertex> result = new HashSet<Vertex>();
 
+        // for each vertex in the graph
         for (Vertex node : myVertices) {
+            // scan for any inNeighbors of current node
             Set<Vertex> inNbrs = inNeighbors(node);
+
+            // if no inNeighbors found, add vertex to result list
             if (inNbrs.isEmpty()) {
                 result.add(node);
             }
         }
 
-        // return result
+        // return result list
         return result;
     }
 }
